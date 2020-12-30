@@ -51,42 +51,10 @@ jobs:
         - docker push $DOCKER_ACCT/mongo:$TRAVIS_BUILD_NUMBER
 
     - stage: deploy
+      if: branch IN (master, develop)
       name: "Deploy to k8s"
       provider: script
       before_script: 
         - curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
         - chmod +x kubectl && sudo mv kubectl /usr/local/bin/kubectl
       script: bash scripts/deploy.sh
-      on:
-        branch: develop
-
-
-# install:
-#   - npm install
-
-# before_script:
-#   - npm run lint
-#   - npm test
-
-# script:
-#   - curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
-#   - chmod +x kubectl && sudo mv kubectl /usr/local/bin/kubectl
-#   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USER" --password-stdin
-#   - docker-compose build
-#   - docker images
-#   - docker tag $DOCKER_ACCT/nginx            $DOCKER_ACCT/nginx:$TRAVIS_BUILD_NUMBER
-#   - docker tag $DOCKER_ACCT/node-codewithdan $DOCKER_ACCT/node-codewithdan:$TRAVIS_BUILD_NUMBER
-#   - docker tag $DOCKER_ACCT/redis            $DOCKER_ACCT/redis:$TRAVIS_BUILD_NUMBER
-#   - docker tag $DOCKER_ACCT/mongo            $DOCKER_ACCT/mongo:$TRAVIS_BUILD_NUMBER
-#   - docker images
-#   - docker push $DOCKER_ACCT/nginx:$TRAVIS_BUILD_NUMBER
-#   - docker push $DOCKER_ACCT/node-codewithdan:$TRAVIS_BUILD_NUMBER
-#   - docker push $DOCKER_ACCT/redis:$TRAVIS_BUILD_NUMBER
-#   - docker push $DOCKER_ACCT/mongo:$TRAVIS_BUILD_NUMBER
-
-
-# deploy:
-#   provider: script
-#   script: bash scripts/deploy.sh
-#   on:
-#     branch: develop
