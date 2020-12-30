@@ -13,8 +13,11 @@ jobs:
   include:
     - stage: test
       name: "Unit Tests"   
-      script: echo 'testing.....'
+      script: echo 'testing1.....'
+    - # stage name not required, will continue to use `test`
+      script: echo 'testing1.....'
     - stage: build
+      name: "build docker images"   
       script: echo 'building.....'
     - stage: deploy
       name: "Deploy to k8s"
