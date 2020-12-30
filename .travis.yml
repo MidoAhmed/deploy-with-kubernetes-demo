@@ -7,8 +7,9 @@ services:
   - docker
 
 env:
-  - APP_ENV=development
-  - DOCKER_ACCT=codewithdan
+  global:
+    - APP_ENV=development
+    - DOCKER_ACCT=codewithdan
 
 cache:
   directories:
