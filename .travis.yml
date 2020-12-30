@@ -9,7 +9,7 @@ services:
 env:
   global:
     - APP_ENV=development
-    - DOCKER_ACCT=codewithdan
+    - DOCKER_ACCT=$DOCKER_USER
 
 cache:
   directories:
@@ -29,6 +29,12 @@ script:
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USER" --password-stdin
   - docker-compose build
   - docker images
+  - docker tag $DOCKER_ACCT/nginx            $DOCKER_ACCT/nginx:$TRAVIS_BUILD_NUMBER
+  - docker tag $DOCKER_ACCT/node-codewithdan $DOCKER_ACCT/node-codewithdan:$TRAVIS_BUILD_NUMBER
+  - docker tag $DOCKER_ACCT/redis            $DOCKER_ACCT/redis:$TRAVIS_BUILD_NUMBER
+  - docker tag $DOCKER_ACCT/mongo            $DOCKER_ACCT/mongo:$TRAVIS_BUILD_NUMBER
+  - docker images
+  #- docker push 
   #- docker build -t <dockerUser>/pypytest:$TRAVIS_BUILD_NUMBER .
 
 deploy:
