@@ -1,6 +1,6 @@
 FROM 		redis:latest
 
-LABEL       author="Dan Wahlin"
+LABEL       author="MEK"
 
 COPY        ./.docker/config/redis.production.conf /etc/redis.conf
 
