@@ -25,17 +25,36 @@ jobs:
   include:
     - stage: test
       name: "Unit Tests"
-      install:
-        - npm install   
+      install: npm install   
       script: npm test
+
     - stage: test
-      name: "Lint with eslint"   
+      name: "Lint"
+      install: npm install   
       script: npm run lint
+
     - stage: build
-      name: "build docker images"   
-      script: echo 'building.....'
+      name: "build docker images"
+      before_script:
+        - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USER" --password-stdin
+      script:
+        - docker-compose build
+        - docker images
+        - docker tag $DOCKER_ACCT/nginx            $DOCKER_ACCT/nginx:$TRAVIS_BUILD_NUMBER
+        - docker tag $DOCKER_ACCT/node-codewithdan $DOCKER_ACCT/node-codewithdan:$TRAVIS_BUILD_NUMBER
+        - docker tag $DOCKER_ACCT/redis            $DOCKER_ACCT/redis:$TRAVIS_BUILD_NUMBER
+        - docker tag $DOCKER_ACCT/mongo            $DOCKER_ACCT/mongo:$TRAVIS_BUILD_NUMBER
+        - docker images
+        - docker push $DOCKER_ACCT/nginx:$TRAVIS_BUILD_NUMBER
+        - docker push $DOCKER_ACCT/node-codewithdan:$TRAVIS_BUILD_NUMBER
+        - docker push $DOCKER_ACCT/redis:$TRAVIS_BUILD_NUMBER
+        - docker push $DOCKER_ACCT/mongo:$TRAVIS_BUILD_NUMBER
+
     - stage: deploy
       name: "Deploy to k8s"
+      before_script: 
+        - curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
+        - chmod +x kubectl && sudo mv kubectl /usr/local/bin/kubectl
       script: echo 'deploy.....'
 
 
