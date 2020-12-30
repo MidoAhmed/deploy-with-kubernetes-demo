@@ -48,14 +48,13 @@ jobs:
         - docker push $DOCKER_ACCT/node-codewithdan:$TRAVIS_BUILD_NUMBER
         - docker push $DOCKER_ACCT/redis:$TRAVIS_BUILD_NUMBER
         - docker push $DOCKER_ACCT/mongo:$TRAVIS_BUILD_NUMBER
-      after_success:
-        - bash scripts/updatekube.sh 
 
     - stage: deploy
       name: "Deploy to k8s"
       provider: script
       install: skip
-      script: cat .k8s/*.deployment.yml | grep 'image:'
+      before_script: cat .k8s/*.deployment.yml | grep 'image:'
+      script: bash scripts/updatekube.sh
       before_deploy:
         # install  kubectl v1.17.0
         - curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.17.0/bin/linux/amd64/kubectl
