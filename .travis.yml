@@ -13,63 +13,60 @@ services:
 
 env:
   global:
-    - APP_ENV=development
+    - APP_ENV=production
     - DOCKER_ACCT=$DOCKER_USER
 
 cache:
   directories:
   - node_modules
 
-script: 
-  - bash scripts/updatekube.sh 
+jobs:
+  include:
+    - stage: test
+      name: "Unit Tests"
+      install: npm install   
+      script: npm test
 
-# jobs:
-#   include:
-#     - stage: test
-#       name: "Unit Tests"
-#       install: npm install   
-#       script: npm test
+    - stage: test
+      name: "Lint"
+      install: npm install   
+      script: npm run lint
 
-#     - stage: test
-#       name: "Lint"
-#       install: npm install   
-#       script: npm run lint
+    - stage: build
+      name: "build docker images"
+      before_script:
+        - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USER" --password-stdin
+      script:
+        - docker-compose build
+        - docker images
+        - docker tag $DOCKER_ACCT/nginx            $DOCKER_ACCT/nginx:$TRAVIS_BUILD_NUMBER
+        - docker tag $DOCKER_ACCT/node-codewithdan $DOCKER_ACCT/node-codewithdan:$TRAVIS_BUILD_NUMBER
+        - docker tag $DOCKER_ACCT/redis            $DOCKER_ACCT/redis:$TRAVIS_BUILD_NUMBER
+        - docker tag $DOCKER_ACCT/mongo            $DOCKER_ACCT/mongo:$TRAVIS_BUILD_NUMBER
+        - docker images
+        - docker push $DOCKER_ACCT/nginx:$TRAVIS_BUILD_NUMBER
+        - docker push $DOCKER_ACCT/node-codewithdan:$TRAVIS_BUILD_NUMBER
+        - docker push $DOCKER_ACCT/redis:$TRAVIS_BUILD_NUMBER
+        - docker push $DOCKER_ACCT/mongo:$TRAVIS_BUILD_NUMBER
+      after_success:
+        - bash scripts/updatekube.sh 
 
-#     - stage: build
-#       name: "build docker images"
-#       before_script:
-#         - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USER" --password-stdin
-#       script:
-#         - docker-compose build
-#         - docker images
-#         - docker tag $DOCKER_ACCT/nginx            $DOCKER_ACCT/nginx:$TRAVIS_BUILD_NUMBER
-#         - docker tag $DOCKER_ACCT/node-codewithdan $DOCKER_ACCT/node-codewithdan:$TRAVIS_BUILD_NUMBER
-#         - docker tag $DOCKER_ACCT/redis            $DOCKER_ACCT/redis:$TRAVIS_BUILD_NUMBER
-#         - docker tag $DOCKER_ACCT/mongo            $DOCKER_ACCT/mongo:$TRAVIS_BUILD_NUMBER
-#         - docker images
-#         - docker push $DOCKER_ACCT/nginx:$TRAVIS_BUILD_NUMBER
-#         - docker push $DOCKER_ACCT/node-codewithdan:$TRAVIS_BUILD_NUMBER
-#         - docker push $DOCKER_ACCT/redis:$TRAVIS_BUILD_NUMBER
-#         - docker push $DOCKER_ACCT/mongo:$TRAVIS_BUILD_NUMBER
-#       after_success:
-#         - bash scripts/updateKube.sh 
-
-#     - stage: deploy
-#       name: "Deploy to k8s"
-#       provider: script
-#       before_script:
-#         # install  kubectl v1.17.0
-#         - curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.17.0/bin/linux/amd64/kubectl
-#         - chmod +x kubectl && sudo mv kubectl /usr/local/bin/kubectl
-#         - kubectl version --client
-#       script: skip
-#       deploy:
-#         provider: script
-#         script: bash scripts/deploy.sh
-#         # on:
-#         #   branch: develop
-#       branches:
-#         only:
-#         - develop
-#         - master
+    - stage: deploy
+      name: "Deploy to k8s"
+      provider: script
+      before_script:
+        # install  kubectl v1.17.0
+        - curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.17.0/bin/linux/amd64/kubectl
+        - chmod +x kubectl && sudo mv kubectl /usr/local/bin/kubectl
+        - kubectl version --client
+      script: skip
+      deploy:
+        provider: script
+        script: bash scripts/deploy.sh
+        # on:
+        #   branch: develop
+      branches:
+        only:
+        - develop
+        - master
       
