@@ -1,6 +1,6 @@
 FROM node:alpine
 
-LABEL author="Dan Wahlin"
+LABEL author="MEK"
 
 WORKDIR /var/www/codewithdan
 

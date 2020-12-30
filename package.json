@@ -1,13 +1,13 @@
 {
-  "name": "codewithdan",
+  "name": "deploy-with-kubernetes-demo",
   "version": "1.0.0",
-  "description": "Code with Dan site",
-  "author": "Dan Wahlin",
+  "description": "deploy with k8s demo",
+  "author": "MEK",
   "main": "server.js",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/DanWahlin/CodeWithDanDockerServices.git"
+    "url": "https://github.com/MidoAhmed/deploy-with-kubernetes-demo"
   },
   "scripts": {
     "start": "node server.js",

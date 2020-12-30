@@ -52,11 +52,13 @@ jobs:
 
     - stage: deploy
       name: "Deploy to k8s"
+      provider: script
       before_script: 
         - curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
         - chmod +x kubectl && sudo mv kubectl /usr/local/bin/kubectl
-      script: echo 'deploy.....'
-
+      script: bash scripts/deploy.sh
+      on:
+        branch: develop
 
 
 # install:
