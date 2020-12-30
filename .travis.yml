@@ -52,6 +52,11 @@ jobs:
 
     - stage: deploy
       name: "Deploy to k8s"
+      install:
+        # install  kubectl v1.17.0
+        - curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.17.0/bin/linux/amd64/kubectl
+        - chmod +x kubectl && sudo mv kubectl /usr/local/bin/kubectl
+        - kubectl version --client
       script: bash scripts/deploy.sh
       # provider: script
       # before_script:
