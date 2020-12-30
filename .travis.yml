@@ -33,22 +33,24 @@ jobs:
       install: npm install   
       script: npm run lint
 
-    # - stage: build
-    #   name: "build docker images"
-    #   before_script:
-    #     - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USER" --password-stdin
-    #   script:
-    #     - docker-compose build
-    #     - docker images
-    #     - docker tag $DOCKER_ACCT/nginx            $DOCKER_ACCT/nginx:$TRAVIS_BUILD_NUMBER
-    #     - docker tag $DOCKER_ACCT/node-codewithdan $DOCKER_ACCT/node-codewithdan:$TRAVIS_BUILD_NUMBER
-    #     - docker tag $DOCKER_ACCT/redis            $DOCKER_ACCT/redis:$TRAVIS_BUILD_NUMBER
-    #     - docker tag $DOCKER_ACCT/mongo            $DOCKER_ACCT/mongo:$TRAVIS_BUILD_NUMBER
-    #     - docker images
-    #     - docker push $DOCKER_ACCT/nginx:$TRAVIS_BUILD_NUMBER
-    #     - docker push $DOCKER_ACCT/node-codewithdan:$TRAVIS_BUILD_NUMBER
-    #     - docker push $DOCKER_ACCT/redis:$TRAVIS_BUILD_NUMBER
-    #     - docker push $DOCKER_ACCT/mongo:$TRAVIS_BUILD_NUMBER
+    - stage: build
+      name: "build docker images"
+      before_script:
+        - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USER" --password-stdin
+      script:
+        - docker-compose build
+        - docker images
+        - docker tag $DOCKER_ACCT/nginx            $DOCKER_ACCT/nginx:$TRAVIS_BUILD_NUMBER
+        - docker tag $DOCKER_ACCT/node-codewithdan $DOCKER_ACCT/node-codewithdan:$TRAVIS_BUILD_NUMBER
+        - docker tag $DOCKER_ACCT/redis            $DOCKER_ACCT/redis:$TRAVIS_BUILD_NUMBER
+        - docker tag $DOCKER_ACCT/mongo            $DOCKER_ACCT/mongo:$TRAVIS_BUILD_NUMBER
+        - docker images
+        - docker push $DOCKER_ACCT/nginx:$TRAVIS_BUILD_NUMBER
+        - docker push $DOCKER_ACCT/node-codewithdan:$TRAVIS_BUILD_NUMBER
+        - docker push $DOCKER_ACCT/redis:$TRAVIS_BUILD_NUMBER
+        - docker push $DOCKER_ACCT/mongo:$TRAVIS_BUILD_NUMBER
+      after_success:
+        - bash scripts/updateKube.sh 
 
     - stage: deploy
       name: "Deploy to k8s"

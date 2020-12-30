@@ -15,7 +15,7 @@ spec:
         app: redis
     spec:
       containers:
-      - image: midosimo1993/redis
+      - image: midosimo1993/redis:VERSION
         imagePullPolicy: IfNotPresent
         name: redis
         ports:
