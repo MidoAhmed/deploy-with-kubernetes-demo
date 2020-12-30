@@ -60,7 +60,9 @@ jobs:
       deploy:
         provider: script
         script: bash scripts/deploy.sh
-        on:
-          branch: develop
-
+        # on:
+        #   branch: develop
+      branches:
+        only:
+        - master
       
