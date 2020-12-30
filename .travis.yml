@@ -35,7 +35,10 @@ jobs:
 
     - stage: build
       name: "build docker images"
-      script: bash scripts/updateKube.sh 
+      script: 
+        - pwd 
+        - ls -all
+        - bash scripts/updateKube.sh 
       # before_script:
       #   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USER" --password-stdin
       # script:
