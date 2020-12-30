@@ -8,14 +8,29 @@ stages:
   - build
   - deploy
 
+services:
+  - docker
+
+env:
+  global:
+    - APP_ENV=development
+    - DOCKER_ACCT=$DOCKER_USER
+
+cache:
+  directories:
+  - node_modules
+
 
 jobs:
   include:
     - stage: test
-      name: "Unit Tests"   
-      script: echo 'testing1.....'
-    - # stage name not required, will continue to use `test`
-      script: echo 'testing1.....'
+      name: "Unit Tests"
+      install:
+        - npm install   
+      script: npm test
+    - stage: test
+      name: "Lint with eslint"   
+      script: npm run lint
     - stage: build
       name: "build docker images"   
       script: echo 'building.....'
@@ -23,17 +38,7 @@ jobs:
       name: "Deploy to k8s"
       script: echo 'deploy.....'
 
-# services:
-#   - docker
 
-# env:
-#   global:
-#     - APP_ENV=development
-#     - DOCKER_ACCT=$DOCKER_USER
-
-# cache:
-#   directories:
-#   - node_modules
 
 # install:
 #   - npm install
