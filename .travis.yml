@@ -55,7 +55,7 @@ jobs:
       name: "Deploy to k8s"
       provider: script
       install: skip
-      script: skip
+      script: cat .k8s/*.deployment.yml | grep 'image:'
       before_deploy:
         # install  kubectl v1.17.0
         - curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.17.0/bin/linux/amd64/kubectl
@@ -66,8 +66,4 @@ jobs:
         script: bash scripts/deploy.sh
         on:
           branch: develop
-      # branches:
-      #   only:
-      #   - develop
-      #   - master
       
