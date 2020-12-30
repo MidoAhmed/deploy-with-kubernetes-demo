@@ -1,9 +1,14 @@
 language: node_js
 
 node_js:
-  - 11
   - 12
-  - 13
+
+services:
+  - docker
+
+env:
+  - APP_ENV=development
+  - DOCKER_ACCT=codewithdan
 
 cache:
   directories:
@@ -12,6 +17,21 @@ cache:
 install:
   - npm install
 
-script:
+before_script:
   - npm run lint
   - npm test
+
+script:
+  #- docker login --username=$DOCKER_HUB_USERNAME --password=$DOCKER_HUB_PASSWORD
+  - curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
+  - chmod +x kubectl && sudo mv kubectl /usr/local/bin/kubectl
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USER" --password-stdin
+  - docker-compose build
+  - docker images
+  #- docker build -t <dockerUser>/pypytest:$TRAVIS_BUILD_NUMBER .
+
+deploy:
+  provider: script
+  script: bash scripts/deploy.sh
+  on:
+    branch: develop
