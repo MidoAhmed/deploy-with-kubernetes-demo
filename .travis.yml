@@ -21,11 +21,7 @@ cache:
   - node_modules
 
 script: 
-  - pwd 
-  - ls -all
-  - ls -all scripts/updateKube.sh 
-  - bash scripts/deploy.sh
-  - bash scripts/updateKube.sh 
+  - bash scripts/updatekube.sh 
 
 # jobs:
 #   include:
