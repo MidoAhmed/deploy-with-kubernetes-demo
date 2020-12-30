@@ -3,42 +3,61 @@ language: node_js
 node_js:
   - 12
 
-services:
-  - docker
+stages:
+  - test
+  - build
+  - deploy
 
-env:
-  global:
-    - APP_ENV=development
-    - DOCKER_ACCT=$DOCKER_USER
 
-cache:
-  directories:
-  - node_modules
+jobs:
+  include:
+    - stage: test
+      name: "Unit Tests"   
+      script: echo 'testing.....'
+    - stage: build
+      script: echo 'building.....'
+    - stage: deploy
+      name: "Deploy to k8s"
+      script: echo 'deploy.....'
 
-install:
-  - npm install
+# services:
+#   - docker
 
-before_script:
-  - npm run lint
-  - npm test
+# env:
+#   global:
+#     - APP_ENV=development
+#     - DOCKER_ACCT=$DOCKER_USER
 
-script:
-  #- docker login --username=$DOCKER_HUB_USERNAME --password=$DOCKER_HUB_PASSWORD
-  - curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
-  - chmod +x kubectl && sudo mv kubectl /usr/local/bin/kubectl
-  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USER" --password-stdin
-  - docker-compose build
-  - docker images
-  - docker tag $DOCKER_ACCT/nginx            $DOCKER_ACCT/nginx:$TRAVIS_BUILD_NUMBER
-  - docker tag $DOCKER_ACCT/node-codewithdan $DOCKER_ACCT/node-codewithdan:$TRAVIS_BUILD_NUMBER
-  - docker tag $DOCKER_ACCT/redis            $DOCKER_ACCT/redis:$TRAVIS_BUILD_NUMBER
-  - docker tag $DOCKER_ACCT/mongo            $DOCKER_ACCT/mongo:$TRAVIS_BUILD_NUMBER
-  - docker images
-  #- docker push 
-  #- docker build -t <dockerUser>/pypytest:$TRAVIS_BUILD_NUMBER .
+# cache:
+#   directories:
+#   - node_modules
 
-deploy:
-  provider: script
-  script: bash scripts/deploy.sh
-  on:
-    branch: develop
+# install:
+#   - npm install
+
+# before_script:
+#   - npm run lint
+#   - npm test
+
+# script:
+#   - curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
+#   - chmod +x kubectl && sudo mv kubectl /usr/local/bin/kubectl
+#   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USER" --password-stdin
+#   - docker-compose build
+#   - docker images
+#   - docker tag $DOCKER_ACCT/nginx            $DOCKER_ACCT/nginx:$TRAVIS_BUILD_NUMBER
+#   - docker tag $DOCKER_ACCT/node-codewithdan $DOCKER_ACCT/node-codewithdan:$TRAVIS_BUILD_NUMBER
+#   - docker tag $DOCKER_ACCT/redis            $DOCKER_ACCT/redis:$TRAVIS_BUILD_NUMBER
+#   - docker tag $DOCKER_ACCT/mongo            $DOCKER_ACCT/mongo:$TRAVIS_BUILD_NUMBER
+#   - docker images
+#   - docker push $DOCKER_ACCT/nginx:$TRAVIS_BUILD_NUMBER
+#   - docker push $DOCKER_ACCT/node-codewithdan:$TRAVIS_BUILD_NUMBER
+#   - docker push $DOCKER_ACCT/redis:$TRAVIS_BUILD_NUMBER
+#   - docker push $DOCKER_ACCT/mongo:$TRAVIS_BUILD_NUMBER
+
+
+# deploy:
+#   provider: script
+#   script: bash scripts/deploy.sh
+#   on:
+#     branch: develop
