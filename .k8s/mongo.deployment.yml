@@ -51,9 +51,9 @@ spec:
       nodeSelectorTerms:
       - matchExpressions:
         - key: kubernetes.io/hostname
-          operator: In
+          operator: In 
           values:
-          - docker-desktop
+          - aks-agentpool-13404914-vmss000001
 
 ---
 

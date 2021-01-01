@@ -7,3 +7,5 @@ node_modules/
 
 *.iml
 solvedIssues.md
+
+azure-blobfish-cluster.yml
